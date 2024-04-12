@@ -5,7 +5,7 @@ __::start__
 			<h1>Email Sent</h1>
 			<p>
 				An email has been sent to you which contains a link to reset your password.
-				If you don't see it, make sure to check you Junk Mail folder because sometimes
+				If you don't see it, make sure to check your Junk Mail folder because sometimes
 				automated emails (like this one) will end up there.
 			</p>
 			<div class="msg">

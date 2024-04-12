@@ -7,47 +7,18 @@ import SessionStateInMemory from '@webhandle/session-state-in-memory'
 import MongoDataService from "@dankolz/mongodb-data-service";
 import filog from "filter-log"
 
-import grecaptchaRequest from 'webhandle-emailer/grecaptcha-request.js'
 
 
 import prepFlashMessages from '../utils/prep-flash-messages.mjs'
 import genUniqueId from '../utils/gen-uniq-id.mjs';
+import handleGRecaptchaCheck from '../utils/handle-recaptcha.mjs';
 
 let mail = new Emailer()
 
-// let webhandleEmail
-// if (process.env.webhandleEmail) {
-// 	if (typeof process.env.webhandleEmail == 'string') {
-// 		try {
-// 			webhandleEmail = JSON.parse(process.env.webhandleEmail)
-// 		} catch (e) {
-// 			log.error('Could not parse webhandleEmail options: ' + e.message)
-// 		}
-// 	}
-// }
-
-async function handleGRecaptchaCheck(options, req) {
-	let p = new Promise((resolve, reject) => {
-		if (options.grecaptchaPrivate) {
-			grecaptchaRequest(options.grecaptchaPrivate, req.body.grt, (err, answer) => {
-				if (answer.success && answer.score >= options.requiredGrecaptchaScore) {
-					resolve(true)
-				}
-				else {
-					resolve(false)
-				}
-			})
-		}
-		else {
-			resolve(true)
-		}
-
-	})
-	return p
-}
 
 
-let testing = true
+
+let testing = false
 
 
 /**
@@ -137,21 +108,16 @@ export default function setup(options) {
 		data.resetLink += url.search ? '&' : '?'
 		data.resetLink += `resetRequest=${resetId}`
 
-		if (!testing) {
-			log.info(`Password reset request for ${to} and user name ${user.name} sent. Reset ID ${resetId}.`)
-			mail.sendEmail({
-				to: to
-				, from: options.from
-				, subject: options.subject
-				, emailTemplate: options.emailTemplate
-				, data: data
-			})
+		log.info(`Password reset request for ${to} and user name ${user.name} sent. Reset ID ${resetId}.`)
+		mail.sendEmail({
+			to: to
+			, from: options.from
+			, subject: options.subject
+			, emailTemplate: options.emailTemplate
+			, data: data
+		})
 
-			res.redirect(options.emailSentUrl)
-		}
-		else {
-			res.redirect(data.resetLink)
-		}
+		res.redirect(options.emailSentUrl)
 	})
 
 	router.get('/perform-reset', async function (req, res, next) {
