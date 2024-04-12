@@ -1,0 +1,38 @@
+__::start__
+<div class="page page-landing">
+	<section class="content">
+		<div class="msg">
+			__flashMessages__
+		</div>
+		<div class="login-container">
+			<h1>Reset Password</h1>
+			<form method="post" action="/password-reset/perform-reset" class="">
+				<input type="hidden" name="resetRequest" />
+				<label>
+					<span class="txt">
+						New Password
+					</span>
+					<input type="password" name="password" required="required">
+				</label>
+				<label>
+					<span class="txt">
+						New Password (confirm)
+					</span>
+					<input type="password" name="passwordConfirmed" required="required">
+				</label>
+				<br />
+				<br />
+				<p>
+					<button class="" type="submit">Change</button>
+				</p>
+			</form>
+			<script>
+				let request = document.querySelector('input[name="resetRequest"]')
+				if(!request.value) {
+					request.value = new URL(window.location).searchParams.get('resetRequest')
+				}
+			</script>
+		</div>
+	</section>
+</div>
+__::end__

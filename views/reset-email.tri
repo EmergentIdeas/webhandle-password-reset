@@ -1,0 +1,10 @@
+<h1>
+	Password Reset
+</h1>
+
+<p>
+	You have requested a password reset for the site __siteName__. Please click on the link below.
+</p>
+<p>
+	<a href="__resetLink__"	>Reset Password</a>
+</p>

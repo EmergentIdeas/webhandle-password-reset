@@ -1,0 +1,17 @@
+__::start__
+<div class="page page-landing">
+	<section class="content">
+		<div class="login-container">
+			<h1>Email Sent</h1>
+			<p>
+				An email has been sent to you which contains a link to reset your password.
+				If you don't see it, make sure to check you Junk Mail folder because sometimes
+				automated emails (like this one) will end up there.
+			</p>
+			<div class="msg">
+				__flashMessages__
+			</div>
+		</div>
+	</section>
+</div>
+__::end__

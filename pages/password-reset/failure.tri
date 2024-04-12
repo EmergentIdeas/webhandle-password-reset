@@ -1,0 +1,15 @@
+__::start__
+<div class="page page-landing">
+	<section class="content">
+		<div class="login-container">
+			<h1>Sadness</h1>
+			<p>
+				An error occurred.
+			</p>
+			<div class="msg">
+				__flashMessages__
+			</div>
+		</div>
+	</section>
+</div>
+__::end__
