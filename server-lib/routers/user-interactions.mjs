@@ -74,12 +74,14 @@ export default function setup(options) {
 		if (!to || !(to.trim())) {
 			log.debug('Password reset request for a blank email')
 			res.redirect(options.failureUrl)
+			return
 		}
 
 		let passed = await handleGRecaptchaCheck(options, req)
 		if(!passed) {
 			log.debug('Password reset failed due to bad recaptcha')
 			res.redirect(options.failureUrl)
+			return
 		}
 
 		let data = {
@@ -93,12 +95,14 @@ export default function setup(options) {
 		if (found.length != 1) {
 			log.error(`Password reset request for ${to} resulted in multiple users.`)
 			res.redirect(options.failureUrl)
+			return
 		}
 		let user = found[0]
 
 		if (!user.email) {
 			log.debug(`Password reset request for ${to} resulted in no destination address.`)
 			res.redirect(options.failureUrl)
+			return
 		}
 
 		let resetId = genUniqueId()
