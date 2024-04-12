@@ -92,6 +92,12 @@ export default function setup(options) {
 		}
 
 		let found = await users.fetch({ email: to })
+		if (found.length == 0) {
+			log.error(`Password reset request for ${to} resulted in no users. But we're pretending we got one.`)
+			res.redirect(options.emailSentUrl)
+			return
+		}
+
 		if (found.length != 1) {
 			log.error(`Password reset request for ${to} resulted in multiple users.`)
 			res.redirect(options.failureUrl)
