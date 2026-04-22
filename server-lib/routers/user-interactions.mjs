@@ -37,8 +37,10 @@ let testing = false
  * @param {string} options.emailSentUrl Url to direct the user to after the email is sent.
  * @param {string} options.successUrl Url to direct the user to on successful change.
  * @param {string} options.failureUrl Url to direct the user to if change can not be completed.
- * @param {string} grecaptchaPrivate Google recaptcha's private key for evaluating the v3 check
- * @param {number} requiredGrecaptchaScore The score which the user must have before password reset will start. (0.4 by default)
+ * @param {string} options.grecaptchaPrivate Google recaptcha's private key for evaluating the v3 check
+ * @param {number} options.requiredGrecaptchaScore The score which the user must have before password reset will start. (0.4 by default)
+ * @param {boolean} [options.createUserSession] Create a user session when the password is reset. Default is true
+ * @param {boolean} [options.lowerSecurityMessages] if true the messages are more honest with users about problems
  * @returns 
  */
 export default function setup(options) {
@@ -51,6 +53,8 @@ export default function setup(options) {
 		, successUrl: '/login'
 		, failureUrl: '/password-reset/failure'
 		, requiredGrecaptchaScore: .4
+		, createUserSession: true
+		, lowerSecurityMessages: true
 	}, options)
 
 	let router = express.Router()
@@ -93,8 +97,14 @@ export default function setup(options) {
 
 		let found = await users.fetch({ email: to })
 		if (found.length == 0) {
-			log.error(`Password reset request for ${to} resulted in no users. But we're pretending we got one.`)
-			res.redirect(options.emailSentUrl)
+			if(options.lowerSecurityMessages) {
+				log.error(`Password reset request for ${to} resulted in no users.`)
+				res.redirect(options.failureUrl)
+			}
+			else {
+				log.error(`Password reset request for ${to} resulted in no users. But we're pretending we got one.`)
+				res.redirect(options.emailSentUrl)
+			}
 			return
 		}
 
@@ -196,11 +206,22 @@ export default function setup(options) {
 
 			authService.updatePass(found, req.body.password)
 			authService.save(found, (err) => {
+				let user = found
 				log.info(`Perform password reset for request ${req.body.resetRequest} and user ${found.name} with email ${found.email}.`)
 				sessionState.delete(req.body.resetRequest)
-				res.addFlashMessage('Your password has been changed.', () => {
-					res.redirect(options.successUrl)
-				})
+				if(options.createUserSession) {
+					res.createUserSession(user.name, () => {
+						req.user = user
+						res.addFlashMessage('Your password has been changed.', () => {
+							res.redirect(options.successUrl)
+						})
+					})
+				}
+				else {
+					res.addFlashMessage('Your password has been changed.', () => {
+						res.redirect(options.successUrl)
+					})
+				}
 			})
 		})
 
