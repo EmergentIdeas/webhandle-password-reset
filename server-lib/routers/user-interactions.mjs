@@ -205,6 +205,7 @@ export default function setup(options) {
 			}
 
 			authService.updatePass(found, req.body.password)
+			found.enabled = true
 			authService.save(found, (err) => {
 				let user = found
 				log.info(`Perform password reset for request ${req.body.resetRequest} and user ${found.name} with email ${found.email}.`)
