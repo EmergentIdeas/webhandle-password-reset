@@ -167,10 +167,10 @@ export default function setup(options) {
 			return
 		}
 
-		log.info(`Perform password reset for request ${req.body.resetRequest}.`)
+		log.info(`1: Perform password reset for request ${req.body.resetRequest}.`)
 		let user = await sessionState.get(req.body.resetRequest)
 		if (!user) {
-			log.error(`Received perform password reset for request ${req.body.resetRequest} but there was no user associated with it.`)
+			log.error(`2: Received perform password reset for request ${req.body.resetRequest} but there was no user associated with it.`)
 			res.addFlashMessage("We could not reset the password.", () => {
 				res.redirect(options.failureUrl)
 			})
@@ -178,7 +178,7 @@ export default function setup(options) {
 		}
 		
 		if(req.body.password != req.body.passwordConfirmed) {
-			log.error(`Received perform password reset for request ${req.body.resetRequest}  user ${user.name} email ${user.email} but passwords did not match.`)
+			log.error(`3: Received perform password reset for request ${req.body.resetRequest}  user ${user.name} email ${user.email} but passwords did not match.`)
 			res.addFlashMessage("Passwords did not match", () => {
 				res.redirect(req.headers['referer'])
 			})
@@ -187,7 +187,7 @@ export default function setup(options) {
 		}
 
 		if((!req.body.password) || (!req.body.password.trim())) {
-			log.error(`Received perform password reset for request ${req.body.resetRequest}  user ${user.name} email ${user.email} but password was blank.`)
+			log.error(`4: Received perform password reset for request ${req.body.resetRequest}  user ${user.name} email ${user.email} but password was blank.`)
 			res.addFlashMessage("Passwords did not match", () => {
 				res.redirect(req.headers['referer'])
 			})
@@ -197,7 +197,7 @@ export default function setup(options) {
 
 		authService.findUser(user.name, (err, found) => {
 			if(err || !found) {
-				log.error(`Received perform password reset for request ${req.body.resetRequest} but could not load user ${found.name}`)
+				log.error(`5: Received perform password reset for request ${req.body.resetRequest} but could not load user ${found.name}`)
 				res.addFlashMessage("We could not reset the password.", () => {
 					res.redirect(options.failureUrl)
 				})
@@ -208,7 +208,7 @@ export default function setup(options) {
 			found.enabled = true
 			authService.save(found, (err) => {
 				let user = found
-				log.info(`Perform password reset for request ${req.body.resetRequest} and user ${found.name} with email ${found.email}.`)
+				log.info(`6: Perform password reset for request ${req.body.resetRequest} and user ${found.name} with email ${found.email}.`)
 				sessionState.delete(req.body.resetRequest)
 				if(options.createUserSession) {
 					res.createUserSession(user.name, () => {
